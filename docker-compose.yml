@@ -1,57 +1,59 @@
+version: '3'
 services:
   # Oracle Database
   oracle:
-    image: oracleinanutshell/oracle-xe-11g:latest
-    container_name: oracle
+    image: ${ORACLE_IMAGE}
+    container_name: ${ORACLE_CONTAINER_NAME}
     ports:
-      - "1521:1521"
+      - "${ORACLE_PORT}:${ORACLE_PORT}"
     environment:
-      - ORACLE_ALLOW_REMOTE=true
-      - ORACLE_PASSWORD=YourPassword
+      - ORACLE_ALLOW_REMOTE=${ORACLE_ALLOW_REMOTE}
+      - ORACLE_PASSWORD=${ORACLE_PASSWORD}
     volumes:
-      - ./docker/data/oracle_data:/u01/app/oracle
+      - ${ORACLE_VOLUME}
 
   # MongoDB
   mongodb:
-    image: mongo
-    container_name: mongo
+    image: ${MONGO_IMAGE}
+    container_name: ${MONGO_CONTAINER_NAME}
     ports:
-      - "27017:27017"
+      - "${MONGO_PORT}:${MONGO_PORT}"
     volumes:
-      - ./docker/mongod.conf:/etc/mongod.conf
-      - ./docker/data/mongo_data:/data/db
+      - ${MONGO_CONFIG}
+      - ${MONGO_VOLUME}
     command: mongod --config /etc/mongod.conf
 
   # Redis
   redis:
-    image: redis
-    container_name: redis
+    image: ${REDIS_IMAGE}
+    container_name: ${REDIS_CONTAINER_NAME}
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
-      - ./docker/data/redis_data:/data
+      - ${REDIS_VOLUME}
+
+  # Zookeeper
+  zookeeper:
+    image: ${ZOOKEEPER_IMAGE}
+    container_name: ${ZOOKEEPER_CONTAINER_NAME}
+    environment:
+      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT}
+      ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME}
+    ports:
+      - "${ZOOKEEPER_CLIENT_PORT}:${ZOOKEEPER_CLIENT_PORT}"
 
   # Kafka
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
-
   kafka:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka
+    image: ${KAFKA_IMAGE}
+    container_name: ${KAFKA_CONTAINER_NAME}
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092"
+      - "${KAFKA_PORT}:${KAFKA_PORT}"
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_BROKER_ID: ${KAFKA_BROKER_ID}
+      KAFKA_ZOOKEEPER_CONNECT: ${KAFKA_ZOOKEEPER_CONNECT}
+      KAFKA_ADVERTISED_LISTENERS: ${KAFKA_ADVERTISED_LISTENERS}
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
     volumes:
-      - ./docker/data/kafka_data:/var/lib/kafka/data
+      - ${KAFKA_VOLUME}
