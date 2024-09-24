@@ -10,9 +10,4 @@ public class FrontController {
     public String chat() {
         return "chat"; // "chat.html" 파일을 반환
     }
-
-//    @GetMapping("/webrtc")
-//    public String webrtc() {
-//        return "webrtc"; // "webrtc.html" 파일을 반환
-//    }
 }

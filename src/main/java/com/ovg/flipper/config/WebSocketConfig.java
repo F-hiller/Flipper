@@ -1,6 +1,5 @@
 package com.ovg.flipper.config;
 
-//import com.ovg.flipper.handler.WebRTCSignalHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
@@ -8,7 +7,7 @@ import org.springframework.web.socket.config.annotation.*;
 @Configuration
 @EnableWebSocket
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer { //WebSocketConfigurer  {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic"); // 메시지를 브로드캐스트할 경로
@@ -19,10 +18,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer { //Web
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-stomp").withSockJS();
     }
-
-//    @Override
-//    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-//        registry.addHandler(new WebRTCSignalHandler(), "/ws-webrtc")
-//                .setAllowedOrigins("*");
-//    }
 }
