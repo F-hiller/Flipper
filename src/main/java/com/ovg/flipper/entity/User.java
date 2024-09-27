@@ -1,9 +1,12 @@
 package com.ovg.flipper.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
 
 @Entity
 @Table(name = "users")
+@Getter
 public class User extends BaseEntity {
 
     @Id
@@ -22,7 +25,15 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String role;
 
-    // Getters and setters
+    protected User() {
+
+    }
+
+    @Builder
+    public User(String username, String password, String email, String role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = (role != null) ? role : "ROLE_USER"; // 기본값 설정
+    }
 }
-
-
