@@ -33,4 +33,15 @@ public class UserAuthController {
         signUpService.registerUser(user);
         return "redirect:/login";
     }
+
+    // TEST : admin page
+    @GetMapping("/admin")
+    public String showAdminPage() {
+        return "admin";
+    }
+
+    @GetMapping("/403")
+    public String accessDenied() {
+        return "403";
+    }
 }

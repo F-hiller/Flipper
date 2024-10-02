@@ -21,10 +21,16 @@ public class UserAuthService {
 
     @Transactional
     public void registerUser(UserSignupDto userInfo) {
+        String userRole = "ROLE_USER";
+        // TEST : make admin user.
+        if (userInfo.getUsername().startsWith("admin_")){
+            userRole = "ROLE_ADMIN";
+        }
         User user = User.builder()
                 .username(userInfo.getUsername())
                 .password(passwordEncoder.encode(userInfo.getPassword()))
                 .email(userInfo.getEmail())
+                .role(userRole)
                 .build();
 
         userRepository.save(user);
