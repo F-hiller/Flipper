@@ -34,6 +34,9 @@ services:
       - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
       - ${REDIS_VOLUME}
+    environment:
+      - DOCKER_REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: ["redis-server", "--requirepass", "$DOCKER_REDIS_PASSWORD"]
 
   # Zookeeper
   zookeeper:

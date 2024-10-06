@@ -18,9 +18,10 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize.requestMatchers("/signup", "/login", "/403").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().denyAll()
-                ).formLogin(form -> form.loginPage("/login")
-                        .permitAll()
-                        .failureUrl("/login?error=true"))
+                )
+//                .formLogin(form -> form.loginPage("/login")
+//                        .permitAll()
+//                        .failureUrl("/login?error=true"))
                 .logout(LogoutConfigurer::permitAll)
                 .exceptionHandling(exception -> exception.accessDeniedPage("/403"));
 
