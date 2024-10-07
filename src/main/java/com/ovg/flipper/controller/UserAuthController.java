@@ -6,9 +6,11 @@ import com.ovg.flipper.dto.UserSignupDto;
 import com.ovg.flipper.service.UserAuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -28,7 +30,10 @@ public class UserAuthController {
     }
 
     @PostMapping("/login")
-    public String login(HttpServletResponse response, UserLoginDto user) {
+    public String login(HttpServletResponse response, @Valid UserLoginDto user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "login";
+        }
         UserAuthDto userAuthDto = userAuthService.login(user);
         if (userAuthDto == null) {
             return "redirect:/login?error";
@@ -54,7 +59,10 @@ public class UserAuthController {
     }
 
     @PostMapping("/signup")
-    public String signUp(UserSignupDto user) {
+    public String signUp(@Valid UserSignupDto user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "signup";
+        }
         if(userAuthService.registerUser(user)){
             return "redirect:/login";
         }
