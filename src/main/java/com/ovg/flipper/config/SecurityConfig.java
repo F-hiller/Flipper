@@ -19,9 +19,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorize -> authorize.requestMatchers("/signup", "/login", "/403", "/chat", "/mypage").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN")
-                        .anyRequest().denyAll()
+        http.authorizeHttpRequests(authorize -> authorize.requestMatchers(
+                                        "/signup", "/login", "/403", "/chat", "/mypage","/ws-stomp/**"
+                                ).permitAll()
+                                .requestMatchers("/admin").hasRole("ADMIN")
+                                .anyRequest().denyAll()
                 )
                 .logout(LogoutConfigurer::permitAll)
                 .exceptionHandling(exception -> exception.accessDeniedPage("/403"));

@@ -1,35 +1,35 @@
 package com.ovg.flipper.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class RedisJwtRepository implements JwtRepository {
 
-    private final StringRedisTemplate redisTemplate;
+    private final RedisTemplate<String, Long> redisTemplate;
 
-    public RedisJwtRepository(StringRedisTemplate redisTemplate) {
+    public RedisJwtRepository(RedisTemplate<String, Long> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
     @Override
-    public void save(String userId, String token) {
-        redisTemplate.opsForValue().set(userId, token);
+    public void save(String token, Long userId) {
+        redisTemplate.opsForValue().set(token, userId);
     }
 
     @Override
-    public boolean exists(String userId) {
-        return redisTemplate.hasKey(userId) == Boolean.TRUE;
+    public boolean exists(String token) {
+        return redisTemplate.hasKey(token) == Boolean.TRUE;
     }
 
     @Override
-    public void delete(String userId) {
-        redisTemplate.delete(userId);
+    public void delete(String token) {
+        redisTemplate.delete(token);
     }
 
     @Override
-    public String get(String userId) {
-        return redisTemplate.opsForValue().get(userId);
+    public Long get(String token) {
+        return redisTemplate.opsForValue().get(token);
     }
 }

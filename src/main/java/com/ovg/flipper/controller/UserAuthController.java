@@ -4,6 +4,7 @@ import com.ovg.flipper.dto.UserAuthDto;
 import com.ovg.flipper.dto.UserLoginDto;
 import com.ovg.flipper.dto.UserSignupDto;
 import com.ovg.flipper.service.UserAuthService;
+import com.ovg.flipper.util.CookieManager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class UserAuthController {
 
     private final UserAuthService userAuthService;
+    private final CookieManager cookieManager;
 
-    public UserAuthController(UserAuthService userAuthService) {
+    public UserAuthController(UserAuthService userAuthService, CookieManager cookieManager) {
         this.userAuthService = userAuthService;
+        this.cookieManager = cookieManager;
     }
 
     @GetMapping("/login")
@@ -39,16 +42,9 @@ public class UserAuthController {
             return "redirect:/login?error";
         }
 
-        Cookie accessToken = new Cookie("ACCESS_TOKEN", userAuthDto.getAccessToken());
-        Cookie refreshToken = new Cookie("REFRESH_TOKEN", userAuthDto.getRefreshToken());
+        cookieManager.addCookie("ACCESS_TOKEN", userAuthDto.getAccessToken(), response);
+        cookieManager.addCookie("REFRESH_TOKEN", userAuthDto.getRefreshToken(), response);
 
-        accessToken.setHttpOnly(true);
-        accessToken.setAttribute("SameSite", "Strict");
-        refreshToken.setHttpOnly(true);
-        refreshToken.setAttribute("SameSite", "Strict");
-
-        response.addCookie(accessToken);
-        response.addCookie(refreshToken);
         return "redirect:/mypage";
     }
 

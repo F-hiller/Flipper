@@ -1,7 +1,9 @@
 package com.ovg.flipper.config;
 
+import com.ovg.flipper.dto.UserAuthDto;
 import com.ovg.flipper.service.CustomUserDetailsService;
-import com.ovg.flipper.util.JwtProvider;
+import com.ovg.flipper.util.CookieManager;
+import com.ovg.flipper.util.JwtManager;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -20,20 +22,35 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class AuthenticationTokenFilter extends OncePerRequestFilter {
-    private final JwtProvider jwtProvider;
+    private final JwtManager jwtManager;
     private final CustomUserDetailsService customUserDetailsService;
+    private final CookieManager cookieManager;
 
-    public AuthenticationTokenFilter(JwtProvider jwtProvider, CustomUserDetailsService customUserDetailsService) {
-        this.jwtProvider = jwtProvider;
+    public AuthenticationTokenFilter(JwtManager jwtManager, CustomUserDetailsService customUserDetailsService, CookieManager cookieManager) {
+        this.jwtManager = jwtManager;
         this.customUserDetailsService = customUserDetailsService;
+        this.cookieManager = cookieManager;
     }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-        String token = resolveAccessToken(request);
+        String[] tokens = cookieManager.resolveTokens(request);
+        String accessToken = tokens[0];
+        String refreshToken = tokens[1];
+        String token = "";
 
-        if(jwtProvider.validateToken(token)){
-            String userName = jwtProvider.getUserName(token);
+        if(jwtManager.validateToken(accessToken)){
+            token = accessToken;
+        }
+        else if (jwtManager.validateToken(refreshToken) && jwtManager.checkRefreshTokenExists(refreshToken)){
+            UserAuthDto userAuthDto = jwtManager.generateTokens(refreshToken);
+            cookieManager.addCookie("ACCESS_TOKEN", userAuthDto.getAccessToken(), response);
+            cookieManager.addCookie("REFRESH_TOKEN", userAuthDto.getRefreshToken(), response);
+            token = userAuthDto.getAccessToken();
+        }
+
+        if(!token.equals("")){
+            String userName = jwtManager.getUserName(token);
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(userName);
 
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -42,18 +59,5 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private String resolveAccessToken(HttpServletRequest request) {
-        // 쿠키에서 토큰 추출
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("ACCESS_TOKEN".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return "";
     }
 }

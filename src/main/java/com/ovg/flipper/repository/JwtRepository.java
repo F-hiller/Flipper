@@ -1,8 +1,8 @@
 package com.ovg.flipper.repository;
 
 public interface JwtRepository {
-    void save(String userName, String token);
-    boolean exists(String userId);
-    void delete(String userId);
-    String get(String userId);
+    void save(String token, Long userId);
+    boolean exists(String token);
+    void delete(String token);
+    Long get(String token);
 }

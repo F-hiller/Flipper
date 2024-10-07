@@ -4,9 +4,8 @@ import com.ovg.flipper.dto.UserAuthDto;
 import com.ovg.flipper.dto.UserLoginDto;
 import com.ovg.flipper.entity.User;
 import com.ovg.flipper.dto.UserSignupDto;
-import com.ovg.flipper.repository.RedisJwtRepository;
 import com.ovg.flipper.repository.UserRepository;
-import com.ovg.flipper.util.JwtProvider;
+import com.ovg.flipper.util.JwtManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,14 +19,12 @@ import java.util.Optional;
 public class UserAuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
-    private final RedisJwtRepository redisJwtRepository;
+    private final JwtManager jwtManager;
 
-    public UserAuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, RedisJwtRepository redisJwtRepository) {
+    public UserAuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtManager jwtManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtProvider = jwtProvider;
-        this.redisJwtRepository = redisJwtRepository;
+        this.jwtManager = jwtManager;
     }
 
     @Transactional
@@ -67,12 +64,6 @@ public class UserAuthService {
     }
 
     private UserAuthDto createJwt(User u) {
-        UserAuthDto userAuthDto = jwtProvider.generateTokens(u.getUsername());
-        redisJwtRepository.save(String.valueOf(u.getUserId()), userAuthDto.getRefreshToken());
-        return userAuthDto;
-    }
-
-    public boolean checkRefreshToken(String token){
-        return redisJwtRepository.exists(token);
+        return jwtManager.generateTokens(u.getUserId(), u.getUsername());
     }
 }
