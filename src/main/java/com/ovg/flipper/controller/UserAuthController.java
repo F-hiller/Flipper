@@ -55,9 +55,10 @@ public class UserAuthController {
 
     @PostMapping("/signup")
     public String signUp(UserSignupDto user) {
-        // 회원가입 로직을 서비스에 위임
-        userAuthService.registerUser(user);
-        return "redirect:/login";
+        if(userAuthService.registerUser(user)){
+            return "redirect:/login";
+        }
+        return "redirect:/signup?error";
     }
 
     // TEST : admin page

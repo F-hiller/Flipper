@@ -31,13 +31,12 @@ public class UserAuthService {
     }
 
     @Transactional
-    public void registerUser(UserSignupDto userInfo) {
-        // TODO : check if user already exists
-        String userRole = "ROLE_USER";
-        // TEST : make admin user.
-        if (userInfo.getUsername().startsWith("admin_")){
-            userRole = "ROLE_ADMIN";
+    public boolean registerUser(UserSignupDto userInfo) {
+        if(userRepository.findByUsername(userInfo.getUsername()).isPresent() || userRepository.findByEmail(userInfo.getEmail()).isPresent()){
+            return false;
         }
+
+        String userRole = "ROLE_USER";
         User user = User.builder()
                 .username(userInfo.getUsername())
                 .password(passwordEncoder.encode(userInfo.getPassword()))
@@ -46,6 +45,7 @@ public class UserAuthService {
                 .build();
 
         userRepository.save(user);
+        return true;
     }
 
     @Transactional
