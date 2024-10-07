@@ -6,7 +6,6 @@ import com.ovg.flipper.util.CookieManager;
 import com.ovg.flipper.util.JwtManager;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +48,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
             token = userAuthDto.getAccessToken();
         }
 
-        if(!token.equals("")){
+        if(token.isBlank()){
             String userName = jwtManager.getUserName(token);
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(userName);
 

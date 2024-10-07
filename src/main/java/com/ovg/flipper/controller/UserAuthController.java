@@ -5,7 +5,6 @@ import com.ovg.flipper.dto.UserLoginDto;
 import com.ovg.flipper.dto.UserSignupDto;
 import com.ovg.flipper.service.UserAuthService;
 import com.ovg.flipper.util.CookieManager;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
