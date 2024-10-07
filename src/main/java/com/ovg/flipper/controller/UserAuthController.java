@@ -42,13 +42,9 @@ public class UserAuthController {
         refreshToken.setHttpOnly(true);
         refreshToken.setAttribute("SameSite", "Strict");
 
-        // TODO : MUST DELETE! BEFORE COMMIT
-        log.warn("access : {}", accessToken);
-        log.warn("refresh : {}", refreshToken);
-
         response.addCookie(accessToken);
         response.addCookie(refreshToken);
-        return "redirect:/";
+        return "redirect:/mypage";
     }
 
     @GetMapping("/signup")
