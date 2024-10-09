@@ -1,37 +1,41 @@
 package com.ovg.flipper.controller.api;
 
 import com.ovg.flipper.dto.UserAuthDto;
-import com.ovg.flipper.dto.UserLoginDto;
+import com.ovg.flipper.dto.LocalLoginDto;
 import com.ovg.flipper.dto.UserSignupDto;
-import com.ovg.flipper.service.UserAuthService;
+import com.ovg.flipper.service.AuthService;
 import com.ovg.flipper.util.CookieManager;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api")
 public class AuthApiController {
-    private final UserAuthService userAuthService;
+    private final AuthService authService;
     private final CookieManager cookieManager;
 
     @Autowired
-    public AuthApiController(UserAuthService userAuthService, CookieManager cookieManager) {
-        this.userAuthService = userAuthService;
+    public AuthApiController(AuthService authService, CookieManager cookieManager) {
+        this.authService = authService;
         this.cookieManager = cookieManager;
     }
 
     @PostMapping("/login")
-    public String login(HttpServletResponse response, @Valid UserLoginDto user, BindingResult bindingResult) {
+    public String login(HttpServletResponse response, @Valid LocalLoginDto user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "login";
         }
-
-        UserAuthDto userAuthDto = userAuthService.login(user);
+        UserAuthDto userAuthDto = authService.login(user);
         if (userAuthDto == null) {
             return "redirect:/login?error";
         }
@@ -45,10 +49,9 @@ public class AuthApiController {
     @PostMapping("/signup")
     public String signUp(@Valid UserSignupDto user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "signup";
+            return "redirect:/signup";
         }
-
-        if(userAuthService.registerUser(user)){
+        if(authService.registerUser(user, "ROLE_ADMIN")){
             return "redirect:/login";
         }
 

@@ -1,7 +1,6 @@
-package com.ovg.flipper.config;
+package com.ovg.flipper.security;
 
 import com.ovg.flipper.dto.UserAuthDto;
-import com.ovg.flipper.service.CustomUserDetailsService;
 import com.ovg.flipper.util.CookieManager;
 import com.ovg.flipper.util.JwtManager;
 import jakarta.servlet.FilterChain;
@@ -9,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +25,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService customUserDetailsService;
     private final CookieManager cookieManager;
 
+    @Autowired
     public AuthenticationTokenFilter(JwtManager jwtManager, CustomUserDetailsService customUserDetailsService, CookieManager cookieManager) {
         this.jwtManager = jwtManager;
         this.customUserDetailsService = customUserDetailsService;
@@ -48,9 +49,9 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
             token = userAuthDto.getAccessToken();
         }
 
-        if(token.isBlank()){
-            String userName = jwtManager.getUserName(token);
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(userName);
+        if(!token.isBlank()){
+            String email = jwtManager.getUserEmail(token);
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 

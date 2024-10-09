@@ -1,4 +1,4 @@
-package com.ovg.flipper.service;
+package com.ovg.flipper.security;
 
 import com.ovg.flipper.entity.User;
 import com.ovg.flipper.repository.UserRepository;
@@ -22,15 +22,16 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUsername(username);
+        //username으로 email 정보가 들어온다.
+        Optional<User> user = userRepository.findByEmail(username);
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found");
         }
 
-        String userName = user.get().getUsername();
-        String password = user.get().getPassword();
+        String nullablePwd = user.get().getPassword();
+        String password = nullablePwd == null ? "" : nullablePwd;
         String role = user.get().getRole();
 
-        return new org.springframework.security.core.userdetails.User(userName, password, List.of(new SimpleGrantedAuthority(role)));
+        return new org.springframework.security.core.userdetails.User(username, password, List.of(new SimpleGrantedAuthority(role)));
     }
 }

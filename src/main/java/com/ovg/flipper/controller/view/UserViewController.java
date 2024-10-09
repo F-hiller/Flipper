@@ -1,5 +1,7 @@
 package com.ovg.flipper.controller.view;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.ovg.flipper.dto.UserSignupDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,11 +24,13 @@ public class UserViewController {
         return "signup";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
     public String showAdminPage() {
         return "admin";
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/mypage")
     public String myPage(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
