@@ -1,6 +1,5 @@
 package com.ovg.flipper.controller.view;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import com.ovg.flipper.dto.UserSignupDto;
 import org.springframework.security.core.Authentication;
