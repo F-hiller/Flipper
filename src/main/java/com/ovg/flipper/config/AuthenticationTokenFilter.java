@@ -48,7 +48,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
             token = userAuthDto.getAccessToken();
         }
 
-        if(token.isBlank()){
+        if(!token.isBlank()){
             String userName = jwtManager.getUserName(token);
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(userName);
 
