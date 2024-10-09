@@ -8,6 +8,7 @@ import com.ovg.flipper.util.CookieManager;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -65,6 +66,7 @@ public class UserAuthController {
     }
 
     // TEST : admin page
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
     public String showAdminPage() {
         return "admin";
