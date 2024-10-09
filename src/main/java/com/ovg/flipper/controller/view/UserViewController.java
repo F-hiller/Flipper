@@ -1,7 +1,7 @@
-package com.ovg.flipper.controller;
+package com.ovg.flipper.controller.view;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import com.ovg.flipper.dto.UserSignupDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,8 +10,24 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-@Slf4j
-public class MyPageController {
+public class UserViewController {
+
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login";
+    }
+
+    @GetMapping("/signup")
+    public String showSignUpForm(Model model) {
+        model.addAttribute("user", new UserSignupDto());
+        return "signup";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public String showAdminPage() {
+        return "admin";
+    }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/mypage")
