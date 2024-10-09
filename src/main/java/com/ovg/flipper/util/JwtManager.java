@@ -7,6 +7,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +22,9 @@ public class JwtManager {
     private static final int ACCESS_TOKEN_EXPIRATION_TIME = 1000 * 60 * 60; // 1hour
     private static final int REFRESH_TOKEN_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 7; // 1week
     private static SecretKey key;
-
     private final RedisJwtRepository redisJwtRepository;
 
+    @Autowired
     public JwtManager(RedisJwtRepository redisJwtRepository) {
         this.redisJwtRepository = redisJwtRepository;
     }
@@ -33,9 +34,9 @@ public class JwtManager {
         key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
-    public UserAuthDto generateTokens(Long userId, String userName) {
-        String accessToken = generateToken(userName, ACCESS_TOKEN_EXPIRATION_TIME);
-        String refreshToken = generateToken(userName, REFRESH_TOKEN_EXPIRATION_TIME);
+    public UserAuthDto generateTokens(String email, Long userId) {
+        String accessToken = generateToken(email, ACCESS_TOKEN_EXPIRATION_TIME);
+        String refreshToken = generateToken(email, REFRESH_TOKEN_EXPIRATION_TIME);
 
         redisJwtRepository.save(refreshToken, userId);
 
@@ -44,14 +45,14 @@ public class JwtManager {
 
     public UserAuthDto generateTokens(String token) {
         Long userId = redisJwtRepository.get(token);
-        String userName = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
+        String email = getUserEmail(token);
 
-        return generateTokens(userId, userName);
+        return generateTokens(email, userId);
     }
 
-    private String generateToken(String userName, int expirationTime) {
+    private String generateToken(String email, int expirationTime) {
         Claims claims = Jwts.claims()
-                .subject(userName).build();
+                .subject(email).build();
 
         Date curDate = new Date();
         Date expireDate = new Date(curDate.getTime() + expirationTime);
@@ -74,7 +75,7 @@ public class JwtManager {
         return false;
     }
 
-    public String getUserName(String token) {
+    public String getUserEmail(String token) {
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
     }
 

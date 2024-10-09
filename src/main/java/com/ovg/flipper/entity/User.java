@@ -13,10 +13,10 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
     @Column(nullable = false, unique = true)
@@ -25,15 +25,19 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String role;
 
+    @Column
+    private String registrationId;
+
     protected User() {
 
     }
 
     @Builder
-    public User(String username, String password, String email, String role) {
+    public User(String username, String password, String email, String role, String registrationId) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.role = (role != null) ? role : "ROLE_USER"; // 기본값 설정
+        this.role = role;
+        this.registrationId = registrationId;
     }
 }

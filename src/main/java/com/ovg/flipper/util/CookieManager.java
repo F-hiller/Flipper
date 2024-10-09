@@ -28,7 +28,7 @@ public class CookieManager
     public void addCookie (String cookieName, String cookieValue, HttpServletResponse response){
         Cookie cookie = new Cookie(cookieName, cookieValue);
         cookie.setHttpOnly(true);
-        cookie.setAttribute("SameSite", "Strict");
+        cookie.setPath("/");
         response.addCookie(cookie);
     }
 }
