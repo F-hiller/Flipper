@@ -1,9 +1,9 @@
 package com.ovg.flipper.controller;
 
 import com.ovg.flipper.dto.UserAuthDto;
-import com.ovg.flipper.dto.UserLoginDto;
+import com.ovg.flipper.dto.LocalLoginDto;
 import com.ovg.flipper.dto.UserSignupDto;
-import com.ovg.flipper.service.UserAuthService;
+import com.ovg.flipper.service.AuthService;
 import com.ovg.flipper.util.CookieManager;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Slf4j
 public class UserAuthController {
 
-    private final UserAuthService userAuthService;
+    private final AuthService authService;
     private final CookieManager cookieManager;
 
-    public UserAuthController(UserAuthService userAuthService, CookieManager cookieManager) {
-        this.userAuthService = userAuthService;
+    public UserAuthController(AuthService authService, CookieManager cookieManager) {
+        this.authService = authService;
         this.cookieManager = cookieManager;
     }
 
@@ -33,11 +33,11 @@ public class UserAuthController {
     }
 
     @PostMapping("/login")
-    public String login(HttpServletResponse response, @Valid UserLoginDto user, BindingResult bindingResult) {
+    public String login(HttpServletResponse response, @Valid LocalLoginDto user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "login";
         }
-        UserAuthDto userAuthDto = userAuthService.login(user);
+        UserAuthDto userAuthDto = authService.login(user);
         if (userAuthDto == null) {
             return "redirect:/login?error";
         }
@@ -57,9 +57,9 @@ public class UserAuthController {
     @PostMapping("/signup")
     public String signUp(@Valid UserSignupDto user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "signup";
+            return "redirect:/signup";
         }
-        if(userAuthService.registerUser(user)){
+        if(authService.registerUser(user, "ROLE_ADMIN")){
             return "redirect:/login";
         }
         return "redirect:/signup?error";

@@ -8,8 +8,8 @@
 
 <form th:action="@{/login}" method="post">
     <div>
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Enter your username"/>
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" placeholder="Enter your email"/>
     </div>
     <div>
         <label for="password">Password</label>
@@ -20,6 +20,9 @@
 
 <!--add register link button-->
 <a href="/signup">Register</a>
+<div>
+    Sign With GitHub: <a href="/oauth2/authorization/github">click here</a>
+</div>
 
 </body>
 </html>
