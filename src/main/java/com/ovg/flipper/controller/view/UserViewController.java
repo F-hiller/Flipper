@@ -1,6 +1,6 @@
-package com.ovg.flipper.controller;
+package com.ovg.flipper.controller.view;
 
-import lombok.extern.slf4j.Slf4j;
+import com.ovg.flipper.dto.UserSignupDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,8 +9,23 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-@Slf4j
-public class MyPageController {
+public class UserViewController {
+
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login";
+    }
+
+    @GetMapping("/signup")
+    public String showSignUpForm(Model model) {
+        model.addAttribute("user", new UserSignupDto());
+        return "signup";
+    }
+
+    @GetMapping("/admin")
+    public String showAdminPage() {
+        return "admin";
+    }
 
     @GetMapping("/mypage")
     public String myPage(Model model) {
