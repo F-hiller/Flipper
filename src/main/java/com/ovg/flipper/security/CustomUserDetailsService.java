@@ -22,8 +22,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        String email = username;
-        Optional<User> user = userRepository.findByEmail(email);
+        //username으로 email 정보가 들어온다.
+        Optional<User> user = userRepository.findByEmail(username);
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -32,6 +32,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         String password = nullablePwd == null ? "" : nullablePwd;
         String role = user.get().getRole();
 
-        return new org.springframework.security.core.userdetails.User(email, password, List.of(new SimpleGrantedAuthority(role)));
+        return new org.springframework.security.core.userdetails.User(username, password, List.of(new SimpleGrantedAuthority(role)));
     }
 }

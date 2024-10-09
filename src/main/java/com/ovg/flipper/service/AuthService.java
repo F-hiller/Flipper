@@ -5,7 +5,6 @@ import com.ovg.flipper.dto.LocalLoginDto;
 import com.ovg.flipper.entity.User;
 import com.ovg.flipper.dto.UserSignupDto;
 import com.ovg.flipper.repository.UserRepository;
-import com.ovg.flipper.security.CustomOAuth2User;
 import com.ovg.flipper.util.JwtManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -75,19 +73,14 @@ public class AuthService {
     }
 
     @Transactional
-    public CustomOAuth2User oauthLogin(Map<String, Object> attributes, String userNameAttributeName, String registrationId) {
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(attributes, userNameAttributeName);
-        String email = customOAuth2User.getEmail();
-
+    public void registerOAuth2User(String email, String userName) {
         Optional<User> searchUser = userRepository.findByEmail(email);
         if(searchUser.isEmpty()){
             registerUser(UserSignupDto.builder()
-                    .username(customOAuth2User.getName())
+                    .username(userName)
                     .email(email)
                     .password("")
                     .build(), "ROLE_USER");
         }
-
-        return customOAuth2User;
     }
 }

@@ -39,8 +39,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         cookieManager.addCookie("ACCESS_TOKEN", userAuthDto.getAccessToken(), response);
         cookieManager.addCookie("REFRESH_TOKEN", userAuthDto.getRefreshToken(), response);
 
-        log.info("test : {}, {}", userAuthDto.getAccessToken(), userAuthDto.getRefreshToken());
-
         response.sendRedirect("/mypage");
     }
 }

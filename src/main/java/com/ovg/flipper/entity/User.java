@@ -16,7 +16,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = true)
+    @Column
     private String password;
 
     @Column(nullable = false, unique = true)
@@ -25,7 +25,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String role;
 
-    @Column(nullable = true)
+    @Column
     private String registrationId;
 
     protected User() {

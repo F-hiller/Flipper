@@ -9,8 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -35,14 +33,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize.requestMatchers(AUTH_WHITELIST).permitAll().anyRequest().permitAll());
-        http.formLogin(AbstractHttpConfigurer::disable).logout(LogoutConfigurer::permitAll).oauth2Login(oauth -> {
-            oauth
-                    .loginPage("/login")
-                    .userInfoEndpoint(userInfo -> userInfo
-                            .userService(customOAuth2UserService)
-                    )
-                    .successHandler(oAuth2AuthenticationSuccessHandler);
-        });
+        http.formLogin(AbstractHttpConfigurer::disable).logout(LogoutConfigurer::permitAll).oauth2Login(oauth -> oauth
+                .loginPage("/login")
+                .userInfoEndpoint(userInfo -> userInfo
+                        .userService(customOAuth2UserService)
+                )
+                .successHandler(oAuth2AuthenticationSuccessHandler));
         http.exceptionHandling(exception -> exception.accessDeniedPage("/403"));
 
         http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);

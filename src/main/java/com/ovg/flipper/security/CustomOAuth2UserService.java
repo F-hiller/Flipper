@@ -2,14 +2,11 @@ package com.ovg.flipper.security;
 
 import com.ovg.flipper.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -34,6 +31,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        return authService.oauthLogin(attributes, userNameAttributeName, registrationId);
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(attributes, userNameAttributeName);
+
+        authService.registerOAuth2User(customOAuth2User.getEmail(), customOAuth2User.getName());
+
+        return customOAuth2User;
     }
 }

@@ -19,7 +19,6 @@ public class ChattingController {
         kafkaProducerService.sendMessage(message);
     }
 
-
     @GetMapping("/chat")
     public String chat() {
         return "chat"; // "chat.html" 파일을 반환
