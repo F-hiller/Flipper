@@ -7,15 +7,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class KafkaConsumerService {
 
-    private final SimpMessagingTemplate messagingTemplate;
+  private final SimpMessagingTemplate messagingTemplate;
 
-    public KafkaConsumerService(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
-    }
+  public KafkaConsumerService(SimpMessagingTemplate messagingTemplate) {
+    this.messagingTemplate = messagingTemplate;
+  }
 
-    @KafkaListener(topics = "chat-topic", groupId = "chat-group")
-    public void consume(String message) {
-        // WebSocket을 통해 구독한 클라이언트들에게 메시지를 전송
-        messagingTemplate.convertAndSend("/topic/messages", message);
-    }
+  @KafkaListener(topics = "chat-topic", groupId = "chat-group")
+  public void consume(String message) {
+    // WebSocket을 통해 구독한 클라이언트들에게 메시지를 전송
+    messagingTemplate.convertAndSend("/topic/messages", message);
+  }
 }

@@ -9,15 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/api")
 public class ChatApiController {
-    private final KafkaProducerService kafkaProducerService;
 
-    @Autowired
-    public ChatApiController(KafkaProducerService kafkaProducerService) {
-        this.kafkaProducerService = kafkaProducerService;
-    }
+  private final KafkaProducerService kafkaProducerService;
 
-    @MessageMapping("/message")
-    public void sendMessage(String message) {
-        kafkaProducerService.sendMessage(message);
-    }
+  @Autowired
+  public ChatApiController(KafkaProducerService kafkaProducerService) {
+    this.kafkaProducerService = kafkaProducerService;
+  }
+
+  @MessageMapping("/message")
+  public void sendMessage(String message) {
+    kafkaProducerService.sendMessage(message);
+  }
 }
