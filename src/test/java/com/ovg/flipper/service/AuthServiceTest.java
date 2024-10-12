@@ -18,6 +18,7 @@ import com.ovg.flipper.entity.User;
 import com.ovg.flipper.repository.UserRepository;
 import com.ovg.flipper.util.JwtManager;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,6 +43,7 @@ public class AuthServiceTest {
   private AuthService authService;
 
   @Test
+  @DisplayName("사용자 등록 성공")
   public void testRegisterUserSuccess() {
     // given
     UserSignupDto signupDto = UserSignupDto.builder().username("testuser").email("test@example.com")
@@ -57,6 +59,7 @@ public class AuthServiceTest {
   }
 
   @Test
+  @DisplayName("해당 이메일을 사용하는 사용자가 이미 존재함")
   public void testRegisterUserAlreadyExists() {
     // given
     UserSignupDto signupDto = UserSignupDto.builder().username("testuser").email("test@example.com")
@@ -73,6 +76,7 @@ public class AuthServiceTest {
   }
 
   @Test
+  @DisplayName("사용자 로그인 성공")
   public void testLoginSuccess() {
     // given
     LocalLoginDto loginDto = LocalLoginDto.builder().email("test@example.com")
@@ -96,6 +100,7 @@ public class AuthServiceTest {
   }
 
   @Test
+  @DisplayName("로그인하려는 사용자를 찾지 못함")
   public void testLoginUserNotFound() {
     // given
     LocalLoginDto loginDto = LocalLoginDto.builder().email("test@example.com")
@@ -112,6 +117,7 @@ public class AuthServiceTest {
   }
 
   @Test
+  @DisplayName("로그인 비밀번호가 틀림")
   public void testLoginPasswordNotMatched() {
     // given
     LocalLoginDto loginDto = LocalLoginDto.builder().email("test@example.com")
@@ -130,7 +136,28 @@ public class AuthServiceTest {
     verify(userRepository).findByEmail(loginDto.getEmail());
   }
 
+
   @Test
+  @DisplayName("OAuth2 사용자가 로컬 로그인 방식으로 로그인 진행")
+  public void testOAuth2UserLoginToLocal() {
+    // given
+    LocalLoginDto loginDto = LocalLoginDto.builder().email("test@example.com")
+        .password("password123").build();
+    User user = User.builder().email("test@example.com").password("").build();
+
+    when(userRepository.findByEmail(loginDto.getEmail())).thenReturn(Optional.of(user));
+
+    // when
+    Exception exception = assertThrows(BadCredentialsException.class,
+        () -> authService.login(loginDto));
+
+    // then
+    assertEquals("User Login Method invalid. Try to login with oauth2.", exception.getMessage());
+    verify(userRepository).findByEmail(loginDto.getEmail());
+  }
+
+  @Test
+  @DisplayName("OAuth2 사용자 등록 성공")
   public void testRegisterOAuth2UserWhenNotExists() {
     // given
     String email = "oauth2@example.com";
@@ -145,6 +172,7 @@ public class AuthServiceTest {
   }
 
   @Test
+  @DisplayName("OAuth2 사용자 로그인 성공")
   public void testRegisterOAuth2UserWhenExists() {
     // given
     String email = "oauth2@example.com";
