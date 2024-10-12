@@ -40,7 +40,7 @@ public class JwtManager {
 
         redisJwtRepository.save(refreshToken, userId);
 
-        return new UserAuthDto(accessToken, refreshToken);
+        return UserAuthDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
     public UserAuthDto generateTokens(String token) {
