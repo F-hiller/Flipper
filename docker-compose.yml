@@ -12,8 +12,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ${POSTGRES_VOLUME}
-    networks:
-      - springboot-network
 
   # MongoDB
   mongodb:
@@ -61,6 +59,39 @@ services:
     volumes:
       - ${KAFKA_VOLUME}
 
+  elasticsearch:
+    image: ${ELASTIC_SEARCH_IMAGE}
+    container_name: ${ELASTIC_SEARCH_NAME}
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "${ELASTIC_SEARCH_PORT}:${ELASTIC_SEARCH_PORT}"
+    networks:
+      - elk
+
+  logstash:
+    image: ${LOGSTASH_IMAGE}
+    container_name: ${LOGSTASH_NAME}
+    volumes:
+      - ${LOGSTASH_VOLUME}
+    ports:
+      - "${LOGSTASH_PORT}:${LOGSTASH_PORT}"
+    depends_on:
+      - ${ELASTIC_SEARCH_NAME}
+    networks:
+      - elk
+
+  kibana:
+    image: ${KIBANA_IMAGE}
+    container_name: ${KIBANA_NAME}
+    ports:
+      - "${KIBANA_PORT}:${KIBANA_PORT}"
+    depends_on:
+      - ${ELASTIC_SEARCH_NAME}
+    networks:
+      - elk
+
 networks:
-  springboot-network:
+  elk:
     driver: bridge

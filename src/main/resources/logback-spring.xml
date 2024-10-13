@@ -1,0 +1,32 @@
+<configuration>
+
+  <!-- 콘솔 패턴 설정 -->
+  <appender class="net.logstash.logback.appender.LogstashTcpSocketAppender" name="LOGSTASH">
+    <destination>${LOGSTASH_HOST}:${LOGSTASH_PORT}</destination>
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+  </appender>
+
+  <!-- 파일 패턴 설정 -->
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="CONSOLE">
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Logstash Appender 설정 -->
+  <logger level="DEBUG" name="org.springframework.web"/>
+
+  <!-- 콘솔 로그 설정 -->
+  <property name="FILE_LOG_PATTERN"
+    value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
+
+  <!-- 루트 로거 설정 -->
+  <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} - %msg%n"/>
+
+  <!-- 특정 패키지별 로깅 레벨 설정 -->
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="LOGSTASH"/>
+  </root>
+
+</configuration>

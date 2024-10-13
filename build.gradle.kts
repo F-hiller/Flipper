@@ -32,6 +32,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.4")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 //	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
